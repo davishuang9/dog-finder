@@ -200,13 +200,21 @@ function App() {
 
   return <div>
     <div>
-      Press + to add a clause to the group. Press G on any clause to put the clause in a new group.<br />
+      <div>See the README at my <a href="https://github.com/davishuang9/dog-finder" target="_blank">GitHub</a>.</div><br />
+      <div>Press + to add a clause to the group. Press G on any clause to put the clause in a new group.</div>
+      <div>For ease of reading, if you need nested groups, 1st create clauses in the parent group equal to <br />
+        the number of nested groups that you need, and then put each of those clauses in a new group.</div>
       <input type="button" value={"Evaluate the statement"} onClick={() => evaluateStatement()} />
     </div>
     <br />
     {tree.current && <Statement expression={tree.current} addClause={addClause} insertGroup={insertGroup} updateClause={updateClause} updateGroup={updateGroup} possibleValues={possibleValues} tabLevel={0} />}
     <br /><br />
-    {filteredBreeds && filteredBreeds.map(breed => <div>{breed}</div>)}
+    {filteredBreeds &&
+      <>
+        <div><strong>RESULTS:</strong></div>
+        {filteredBreeds.map(breed => <div>{breed}</div>)}
+      </>
+    }
   </div>;
 }
 

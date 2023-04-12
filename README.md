@@ -1,70 +1,62 @@
-# Getting Started with Create React App
+# Dog Finder
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## Intro
 
-In the project directory, you can run:
+Fun take-home challenge to create a logical search system to allow a user to "search" for certain dog breeds based on some attributes.
 
-### `npm start`
+![image](./project-screenshot.png)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Solution was inspired by Notion's table view Filters:
+<br>
+![image](./notion-table-filters.png)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Running the project
 
-### `npm test`
+Clone locally and run `npm start` or visit https://davishuang9.github.io/dog-finder/ to see it hosted on GitHub Pages
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Design
 
-### `npm run build`
+Couple goals:
+- Basic `AND` and `OR` functionality
+- Ability to add multiple clauses and nested groups
+- Wanted UX to be intuitive to use / read for 2-3 nested groups
+- Wanted UX to be responsive
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Couple constraints / limitations:
+- Wanted to keep the UI components to simple HTML and not bloat the project with external libraries to save time and to use this opportunity to practice building components from scratch :)
+- Intentionally ignored data issues (i.e. duplicate entries, badly formatted attributes, etc.) to focus more on functionality and to also save time
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+<strong>Overall, the intention was to build an extensible framework with basic functionality (e.g. `AND`, `OR`, `==`, `!=`) that could then easily be extended to handle more complex comparisons, data types, text search etc.</strong>
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Code design
 
-### `npm run eject`
+- Pages: 1
+- Components:
+  - App
+  - Statement
+  - Group
+  - Clause
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Component `<App />`
+- component that handles all of the functionality
+  - ideally could've broken the logical search system out to it's own component
+  - handles the async "API" calls loading the dog breed data
+- contains all of the logic and state for the logical search system
+  - easier to handle state all in one place
+  - state of logical statement (rendered by `<Statement />`) represented by a hash of each "node" in the tree and by a tree-like structure
+    - hash improves runtime when updating expressions (Groups and Clauses) by not needing to search the tree for the relevant node
+    - tree structure guarantees ability to maintain the logical operators for each group and nested group
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Component `<Statement />`
+- component that handles the rendering aspect of the logical search system
+- because of nesting, this essentially became a HOC to recursively render groups
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Component `<Group />`
+- component that handles the visual representation of the logical operators (`AND`, `OR`) and it's nested children
+- also handles indenting groups for readability (definitely can improve readability here but didn't want to spend time playing with CSS)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Component `<Clause />`
+- component that handles the visual representation of the logical filters (comparators)
+- just focused on handling functionality for `==` and `!=` but built the visual components to handle a wider range of possible comparators
