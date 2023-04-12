@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/dog-finder/static/css/main.073c9b0a.css",
-    "main.js": "/dog-finder/static/js/main.e491317c.js",
+    "main.js": "/dog-finder/static/js/main.b968c981.js",
     "static/js/787.ddbb9717.chunk.js": "/dog-finder/static/js/787.ddbb9717.chunk.js",
     "static/media/dog_breeds.csv": "/dog-finder/static/media/dog_breeds.05f56cb72b0fb45d252c.csv",
     "index.html": "/dog-finder/index.html",
     "main.073c9b0a.css.map": "/dog-finder/static/css/main.073c9b0a.css.map",
-    "main.e491317c.js.map": "/dog-finder/static/js/main.e491317c.js.map",
+    "main.b968c981.js.map": "/dog-finder/static/js/main.b968c981.js.map",
     "787.ddbb9717.chunk.js.map": "/dog-finder/static/js/787.ddbb9717.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.073c9b0a.css",
-    "static/js/main.e491317c.js"
+    "static/js/main.b968c981.js"
   ]
 }
