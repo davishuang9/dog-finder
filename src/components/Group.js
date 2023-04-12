@@ -15,7 +15,7 @@ const Group = ({ id, operator, children, addClause, insertGroup, updateClause, u
       <Select name="operator" selectedValue={operator} options={Object.keys(OPERATOR)} updateValue={(value) => updateGroup(id, value)} />&#40;&nbsp;&nbsp;
       {children.map((child, i, array) => (
         <>
-          <Statement node={child} addClause={addClause} insertGroup={insertGroup} updateClause={updateClause} possibleValues={possibleValues} tabLevel={tabLevel + 1} />,
+          <Statement expression={child} addClause={addClause} insertGroup={insertGroup} updateClause={updateClause} possibleValues={possibleValues} tabLevel={tabLevel + 1} />,
           &nbsp;&nbsp;{/* {(i !== array.length - 1) ? <>&nbsp;&nbsp;{operator}&nbsp;&nbsp;</> : <>&nbsp;&nbsp;&nbsp;</>} */}
         </>
       ))}

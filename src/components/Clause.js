@@ -7,7 +7,6 @@ import { COMPARATOR } from "../App";
 import Select from "./Select";
 
 const Clause = ({ id, comparator, attributeName, attributeValue, possibleValues, insertGroup, updateClause }) => {
-  console.log("comparator, attributeName, attributeValue", comparator, attributeName, attributeValue);
   const [selectedName, setSelectedName] = useState(attributeName);
   const [selectedValue, setSelectedValue] = useState(attributeValue);
   const [selectedComparator, setSelectedComparator] = useState(comparator);

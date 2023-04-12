@@ -8,13 +8,13 @@
 // we will render the tree "recursively" with Groups/branch nodes recursively rendering
 //   a Statement for every child of the Group
 
-import { Expression, ExpressionTypes } from '../App';
+import { Expression, isClause, isGroup } from '../App';
 import Group from './Group';
 import Clause from './Clause';
 import React from 'react';
 
-const Statement = ({ node, addClause, insertGroup, updateClause, updateGroup, possibleValues, tabLevel }: {
-  node: Expression;
+const Statement = ({ expression, addClause, insertGroup, updateClause, updateGroup, possibleValues, tabLevel }: {
+  expression: Expression;
   addClause: (id: string) => void;
   insertGroup: (id: string) => void;
   updateClause: (id: string, name: string, value: string, comparator: string) => void;
@@ -22,13 +22,13 @@ const Statement = ({ node, addClause, insertGroup, updateClause, updateGroup, po
   possibleValues: object | null;
   tabLevel: number;
 }) => {
-  let NodeElement;
-  if (node && node.type === ExpressionTypes.Group) {
-    NodeElement = <Group {...node} addClause={addClause} insertGroup={insertGroup} updateClause={updateClause} updateGroup={updateGroup} possibleValues={possibleValues} tabLevel={tabLevel} />;
-  } else if (node && node.type === ExpressionTypes.Clause) {
-    NodeElement = <Clause {...node} possibleValues={possibleValues} insertGroup={insertGroup} updateClause={updateClause} />;
+  let ExpressionElement: any;
+  if (expression && isGroup(expression)) {
+    ExpressionElement = <Group {...expression} addClause={addClause} insertGroup={insertGroup} updateClause={updateClause} updateGroup={updateGroup} possibleValues={possibleValues} tabLevel={tabLevel} />;
+  } else if (expression && isClause(expression)) {
+    ExpressionElement = <Clause {...expression} possibleValues={possibleValues} insertGroup={insertGroup} updateClause={updateClause} />;
   }
-  return !!NodeElement ? NodeElement : null;
+  return !!ExpressionElement ? ExpressionElement : null;
 };
 
 export default Statement;

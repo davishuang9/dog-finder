@@ -51,11 +51,19 @@ export interface Group extends Expression {
   children: [Group | Clause];
 };
 
+export const isGroup = (expression: Expression): expression is Group => {
+  return expression.type === ExpressionTypes.Group;
+};
+
 // leaf node
 export interface Clause extends Expression {
   comparator: COMPARATOR;
   attributeName: string;
   attributeValue: string;
+};
+
+export const isClause = (expression: Expression): expression is Clause => {
+  return expression.type === ExpressionTypes.Clause;
 };
 
 
@@ -137,30 +145,57 @@ function App() {
 
   const evaluateStatement = () => {
     if (dogBreeds === null) return;
-    let possibleBreedNames = Object.keys(dogBreeds);
+    const allBreedNames = Object.keys(dogBreeds);
 
     // DFS to visit every node, filtering possible breeds when we visit a Clause
-    const dfs = (node) => {
-      console.log(node);
-      if (node.type === ExpressionTypes.Clause) {
-        possibleBreedNames = possibleBreedNames.filter(breedName => {
+    const dfs = (expression: Expression | null): Set<string> => {
+      if (!expression) return new Set();
+      if (isClause(expression)) {
+        // return a list of all the breeds that satisfy this clause from a list of all possible breeds
+        // not the most optimal since ideally we should only check breeds that satisfy previously checked clauses
+        return new Set(allBreedNames.filter(breedName => {
           const breedAttributes = dogBreeds[breedName];
-          const breedAttributeValues = breedAttributes[node.attributeName];
-          const selectedValue = node.attributeValue;
-          const comparatorFunction = COMPARATOR_FUNCTIONS[node.comparator];
+          const breedAttributeValues = breedAttributes[expression.attributeName];
+          console.log("breedAttributeValues", breedAttributeValues);
+          const selectedValue = expression.attributeValue;
+          const comparatorFunction = COMPARATOR_FUNCTIONS[expression.comparator];
+
+          // compare all possible values of the given attribute (only have EQ and NEQ data types working)
           for (const value of breedAttributeValues) {
             if (comparatorFunction(value, selectedValue)) return true;
           }
           return false;
-        });
+        }));
       }
-      if (node.type === ExpressionTypes.Group) {
+      if (isGroup(expression)) {
         // need to handle OR statements
-        node.children.forEach(child => dfs(child));
+        const childrenPossibleBreeds = expression.children.map(child => dfs(child));
+        if (expression.operator === OPERATOR.OR) {
+          // essentially a set union; e.g. {} ∪ A ∪ B ∪ C ... etc.
+          return childrenPossibleBreeds.reduce((allPossibleBreeds, possibleBreeds) => {
+            for (const breed of Array.from(possibleBreeds)) {
+              allPossibleBreeds.add(breed);
+            }
+            return allPossibleBreeds;
+          }, new Set());
+        } else if (expression.operator === OPERATOR.AND) {
+          // essentially a set intersection; e.g. A is initial set, then (((A ∩ B) ∩ C) ∩ D ...) etc.
+          const initialSet = childrenPossibleBreeds.shift() as Set<string>;
+          return childrenPossibleBreeds.reduce((allPossibleBreeds, possibleBreeds) => {
+            const intersection = new Set<string>();
+            for (const breed of Array.from(possibleBreeds)) {
+              if (allPossibleBreeds.has(breed)) intersection.add(breed);
+            }
+            return intersection;
+          }, initialSet);
+        }
+        return new Set();
       }
+      // should not happen, all expressions should be of type Group or Clause
+      return new Set();
     };
-    dfs(tree.current);
-    setFilteredBreeds(possibleBreedNames);
+    const possibleBreedNames = dfs(tree.current);
+    setFilteredBreeds(Array.from(possibleBreedNames));
   };
 
   return <div>
@@ -169,7 +204,7 @@ function App() {
       <input type="button" value={"Evaluate the statement"} onClick={() => evaluateStatement()} />
     </div>
     <br />
-    {tree.current && <Statement node={tree.current} addClause={addClause} insertGroup={insertGroup} updateClause={updateClause} updateGroup={updateGroup} possibleValues={possibleValues} tabLevel={0} />}
+    {tree.current && <Statement expression={tree.current} addClause={addClause} insertGroup={insertGroup} updateClause={updateClause} updateGroup={updateGroup} possibleValues={possibleValues} tabLevel={0} />}
     <br /><br />
     {filteredBreeds && filteredBreeds.map(breed => <div>{breed}</div>)}
   </div>;
